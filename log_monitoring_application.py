@@ -17,16 +17,6 @@ def main():
             start_time, task_name, action, pid = line.strip().split(",")
             start_time = datetime.strptime(start_time, "%H:%M:%S")
 
-            # We are looking only for processes that have started and adding them into a 'stack'
-            if action.strip() == "START":
-                processed_task[(task_name, pid)] = {
-                    "start_time": start_time,
-                    "warning": False,
-                    "error": False,
-                }
-            else:
-                processed_task.pop((task_name, pid), None)
-
             # Each time we processed a log(we have a new current time) - with this,
             # check the duration for the old running processes
             now = start_time
@@ -45,6 +35,16 @@ def main():
                     data["error"] = True
                     # Once the error treshold was reached, process can be deleted
                     # from the processed_task for memory/time optimizations.
+
+            # We are looking only for processes that have started and adding them into a 'stack'
+            if action.strip() == "START":
+                processed_task[(task_name, pid)] = {
+                    "start_time": start_time,
+                    "warning": False,
+                    "error": False,
+                }
+            else:
+                processed_task.pop((task_name, pid), None)
 
 
 if __name__ == "__main__":
